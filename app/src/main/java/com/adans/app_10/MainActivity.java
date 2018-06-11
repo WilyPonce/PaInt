@@ -80,7 +80,7 @@ public class MainActivity extends MenuToolbar {
                         Snackbar.make(buttonLogin, "Inicio de sesión exitosos", Snackbar.LENGTH_LONG).show();
 
                         //User Logged in Successfully Launch You home screen activity
-                       Intent intent=new Intent(MainActivity.this,PerfilAct.class);
+                       Intent intent=new Intent(MainActivity.this,VehicleRegAct.class);
 
                        Bundle MBund = new Bundle();
                        MBund.putString("Email",editTextEmail.getText().toString());
@@ -154,7 +154,7 @@ public class MainActivity extends MenuToolbar {
     // for TextView yet not supported in Xml so i have done it programmatically)
     private void initCreateAccountTextView() {
         TextView textViewCreateAccount = (TextView) findViewById(R.id.textViewCreateAccount);
-        textViewCreateAccount.setText(fromHtml("<font color='black'>No tengo cuenta </font><font color='#0c0099'>crear una</font>"));
+        textViewCreateAccount.setText(fromHtml("<font color='black'>I do not have an account </font><font color='#0c0099'>Create one</font>"));
         textViewCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

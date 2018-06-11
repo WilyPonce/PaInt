@@ -1,5 +1,6 @@
 package com.adans.app_10.Cowtech54;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,6 +44,7 @@ public class BtMessageManager {
     public static String MessagePurged = "";
     public static String MessagePurgedCopy = "";
 
+    CowTabFragment1 CowFac1=new CowTabFragment1();
 
     // -- Constructors
     public BtMessageManager(){ //Default constructor
@@ -116,6 +118,7 @@ public class BtMessageManager {
 
     public void updateAll(){
         String[] messageSplitStr;
+        //Data line from CowFracment 1
         messageSplitStr = Message.split("\n");
         MessagePurged = "";
 
@@ -144,9 +147,10 @@ public class BtMessageManager {
                 //Delete
                 Number timePeriod = MatIDs.get(currentIDNum.intValue()).getTimePeriod();
 
+                //Modifi
                 //Log.d("MessageMannager: ", "Time period " + timePeriod);
-                Number tP = 180.0;
-                Number offset = 60.0; //Seconds to delete
+                Number tP = 60.0;
+                Number offset = 30.0; //Seconds to delete
                 if((double)timePeriod>(double)tP){
                     while((double)timePeriod>(double)tP - (double)offset) {//Delete first Offset sec
                         //Log.d("MessageMannager: ", "Removing items");
@@ -157,7 +161,7 @@ public class BtMessageManager {
 
                 recIDs++;
             }else{
-                if(messageSplitStr[i].length()>1)   lostIDs++;
+                if(messageSplitStr[i].length()>1)lostIDs++;
             }
         }
         //Delete first enter from message
@@ -252,16 +256,21 @@ public class BtMessageManager {
         try {
             for (int i = 0; i < numArr.length; i++) {
                 //numArr[i] = Integer.parseInt(arr[i]);
-                if (arr[i].length() > 0 && arr[i].length() < 20) {
-                    //numArr[i] = Integer.parseInt(arr[i]);
+                try {
+                    if (arr[i].length() > 0 && arr[i].length() < 20) {
+                        //numArr[i] = Integer.parseInt(arr[i]);
 
-                    numArr[i] = Double.parseDouble(arr[i]);
-                } else numArr[i] = 0;
+                        numArr[i] = Double.parseDouble(arr[i]);
+                    } else numArr[i] = 0;
+                }catch(NumberFormatException e){
+                    e.printStackTrace();
+                    return new Number[3];
+                }
 
             }
         }catch(NumberFormatException e){
             e.printStackTrace();
-            return new Number[arr.length];
+            return new Number[3];
         }
         return numArr;
     }
