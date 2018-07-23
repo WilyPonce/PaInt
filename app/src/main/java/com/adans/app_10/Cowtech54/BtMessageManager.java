@@ -150,7 +150,7 @@ public class BtMessageManager {
                 //Modifi
                 //Log.d("MessageMannager: ", "Time period " + timePeriod);
                 Number tP = 60.0;
-                Number offset = 30.0; //Seconds to delete
+                Number offset = 30.0; //Seconds to delete   
                 if((double)timePeriod>(double)tP){
                     while((double)timePeriod>(double)tP - (double)offset) {//Delete first Offset sec
                         //Log.d("MessageMannager: ", "Removing items");

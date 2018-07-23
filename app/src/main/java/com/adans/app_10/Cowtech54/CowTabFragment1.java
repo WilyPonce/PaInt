@@ -1,10 +1,12 @@
 package com.adans.app_10.Cowtech54;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -14,6 +16,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,7 +61,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
  * Use the {@link CowTabFragment1#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CowTabFragment1 extends Fragment implements View.OnClickListener, LocationListener{
+public class CowTabFragment1 extends Fragment implements View.OnClickListener, LocationListener {
 
     private final String TAG = CowTabFragment1.class.getSimpleName();
 
@@ -67,7 +70,7 @@ public class CowTabFragment1 extends Fragment implements View.OnClickListener, L
     //Service and Observer RxJava
     CowService cowService;
     CowService.CowBinder cowBinder;
-//    private ContentTestBinding binding; //See https://developer.android.com/topic/libraries/data-binding/
+    //    private ContentTestBinding binding; //See https://developer.android.com/topic/libraries/data-binding/
     Disposable disposable; //stackoverflow.com/questions/14695537/android-update-activity-ui-from-service
     Disposable disposable2;
     //   IBinder cowBinder;
@@ -98,9 +101,9 @@ public class CowTabFragment1 extends Fragment implements View.OnClickListener, L
     //Vat Boolean EdoGPS
     boolean EDOGPSBoo;
     //GPS Vars
-    String LAT,LOG,Speed;
+    String LAT, LOG, Speed;
     //Var Delay
-    Double dly=0.1;
+    Double dly = 0.1;
     //Location Manager
     LocationManager lm;
     //Instancia GPS App
@@ -110,7 +113,7 @@ public class CowTabFragment1 extends Fragment implements View.OnClickListener, L
     //Handler
     private Handler mHandler = new Handler();
     //Vars DB
-    String TS,VAX,VAY,VAZ,VGX,VGY,VGZ,ALT,AGX,AGY,AGZ,NOSts;
+    String TS, VAX, VAY, VAZ, VGX, VGY, VGZ, ALT, AGX, AGY, AGZ, NOSts;
     String FC;
 
     //Timestamp
@@ -166,10 +169,10 @@ public class CowTabFragment1 extends Fragment implements View.OnClickListener, L
         prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         editor = prefs.edit();
 
-        gpsapp=new GpsDataService();
-        sensorserv=new SensorsService();
+        gpsapp = new GpsDataService();
+        sensorserv = new SensorsService();
 
-        tsLong = System.currentTimeMillis()/1000;
+        tsLong = System.currentTimeMillis() / 1000;
         ts = String.valueOf(tsLong);
 
         Calendar cal = Calendar.getInstance();
@@ -179,6 +182,7 @@ public class CowTabFragment1 extends Fragment implements View.OnClickListener, L
     }
 
     View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -194,14 +198,14 @@ public class CowTabFragment1 extends Fragment implements View.OnClickListener, L
 
         //TextViews
         sStatusTxt = (TextView) view.findViewById(R.id.txtStatusTab1);
-        sDeviceNameTxt  = (TextView) view.findViewById(R.id.txtDeviceNameTab1);
+        sDeviceNameTxt = (TextView) view.findViewById(R.id.txtDeviceNameTab1);
         sDeviceMacTxt = (TextView) view.findViewById(R.id.txtDeviceMacTab1);
         sFileTxt = (TextView) view.findViewById(R.id.txtFileTab1);
-        sLatestLocationTxt  = (TextView) view.findViewById(R.id.txtLatestGPSTab1);
+        sLatestLocationTxt = (TextView) view.findViewById(R.id.txtLatestGPSTab1);
         sLatTxt = (TextView) view.findViewById(R.id.txtLatTab1);
         sLonTxt = (TextView) view.findViewById(R.id.txtLonTab1);
         sSatTxt = (TextView) view.findViewById(R.id.txtSatTab1);
-        tvEdoGpsFrac= (TextView) view.findViewById(R.id.tvEdoGPSFrac);
+        tvEdoGpsFrac = (TextView) view.findViewById(R.id.tvEdoGPSFrac);
 
         sStartBtn = (Button) view.findViewById(R.id.cowTab1StartBtn);
         sStopBtn = (Button) view.findViewById(R.id.cowTab1StopBtn);
@@ -210,8 +214,11 @@ public class CowTabFragment1 extends Fragment implements View.OnClickListener, L
         sUpdateBtn = (Button) view.findViewById(R.id.cowTab1UpdateBtn);
 
         //Loc MAnager
-        lm = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
-        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, (long) (dly * 1000), 1, (android.location.LocationListener)this);
+        lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, (long) (dly * 1000), 1, (android.location.LocationListener) this);
+        }
 
         //DEVICE
         //Mode radio buttons--------
@@ -282,25 +289,23 @@ public class CowTabFragment1 extends Fragment implements View.OnClickListener, L
                     disposable.dispose();
                     sStatusTxt.setText(DISCONNECTED);
                     sBound=false;
-
                 }
-                if(EDOGPSBoo) {
                     Intent intent = new Intent(getActivity(), CowService.class);
                     getActivity().bindService(intent, sServerConn, Context.BIND_AUTO_CREATE);
 
+                    String pairedDeviceMac = prefs.getString("cow_paired_mac", "Not synced");
+                    String pairedDevice = prefs.getString("cow_paired_name", "COW_UNSYNCED");
+                    sDeviceMacTxt.setText(pairedDeviceMac);
+                    sDeviceNameTxt.setText(pairedDevice);
+                if(EDOGPSBoo) {
                     //Services Methods
                     startGPSService();
                     starBinder();
                     //DB Saver
                     startRepeating();
                     tss=ts;
-
-                    String pairedDeviceMac = prefs.getString("cow_paired_mac", "Not synced");
-                    String pairedDevice = prefs.getString("cow_paired_name", "COW_UNSYNCED");
-                    sDeviceMacTxt.setText(pairedDeviceMac);
-                    sDeviceNameTxt.setText(pairedDevice);
                 }else {
-                    Toast.makeText(getApplicationContext(), "Espera la conexión del GPS", Toast.LENGTH_LONG).show(); }
+                    Toast.makeText(getApplicationContext(), "GPS & Snsrs serv not started", Toast.LENGTH_LONG).show(); }
 
             }
         });
@@ -432,7 +437,6 @@ public class CowTabFragment1 extends Fragment implements View.OnClickListener, L
             disposable = cowService.observeString()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(string -> sSatTxt.setText(string[4]));
-
         }
 
         @Override
@@ -623,7 +627,6 @@ public class CowTabFragment1 extends Fragment implements View.OnClickListener, L
             {
                 //error
             }
-
             Double dlyto = 0.1;//Segundos
             mHandler.postDelayed(this, (long) (dlyto * 1000));
         }

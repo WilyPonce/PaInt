@@ -110,16 +110,8 @@ public class CowService extends Service{
         return error;
     }
 
-    //Counter of repetings
-    public int CountReps=0;
-
-    //public double[] ArrTsSens= new double[btMessageManager.MatIDs.get(2037).getTime().toArray().length];;
-    //public double[] ArrInc= new double[btMessageManager.MatIDs.get(2037).getTime().toArray().length];
 
 
-    double[] VelInterp,RPMInterp;
-
-    CowTabFragment1 cowf1= new CowTabFragment1();
 
 
     @Override
@@ -165,7 +157,6 @@ public class CowService extends Service{
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
-                    Interp();
 
                     //TODO string. substring( string.length()+1)   if equals ] then it is ok
                     btMessageManager.addNewMessage(readMessage);
@@ -174,57 +165,6 @@ public class CowService extends Service{
                     if(fileCSV!=null)
                         fileCSV.writeInFile(btMessageManager.getMessagePurgedCopy());
                     //mReadBuffer.setText(readMessage);
-
-                    //Vel and RPM Data
-                    //if(CountReps<=29)
-                    //{
-                     //ArrTsSens[CountReps]= Double.valueOf(cowf1.getTS()
-                        // ArrInc[CountReps]= Double.valueOf(cowf1.getAGY());*/
-                    //}
-                    /*else {
-
-                        //Arrays Data
-                        int SizeVel =btMessageManager.MatIDs.get(2037).getTime().toArray().length;
-                        double[] ArrTsVel= new double[SizeVel];
-                        double[] ArrVel= new double[SizeVel];
-                        int SizeRPM= btMessageManager.MatIDs.get(2036).getTime().toArray().length;
-                        double[] ArrTsRPM= new double[SizeRPM];
-                        double[] ArrRPM= new double[SizeRPM];
-
-                        for(int ct=0 ; ct < SizeVel ; ct++ ){
-                            ArrTsVel[ct]= (double) btMessageManager.MatIDs.get(2037).getTime().get(ct);
-                            ArrVel[ct]= (double) btMessageManager.MatIDs.get(2037).getTime().get(ct);
-                        }
-
-                        for(int ct2=0 ; ct2 < SizeRPM ; ct2++ ){
-                            ArrTsRPM[ct2]= (double) btMessageManager.MatIDs.get(2036).getTime().get(ct2);
-                            ArrRPM[ct2]= (double) btMessageManager.MatIDs.get(2036).getTime().get(ct2);
-                        }
-
-                        //IDs 2024-2222
-                        double Tmax=0; double Tmin=0;
-                        for (int ct3=2000;ct3<2224;ct3++){
-                            double CompMax = (double) btMessageManager.MatIDs.get(ct3).getTime().getLast();
-                            double CompMin = (double) btMessageManager.MatIDs.get(ct3).getTime().getFirst();
-                            if(CompMax != 0) {
-
-                                if (CompMax < Tmax) {
-                                    Tmax = CompMax;
-                                } else {
-                                }
-                                if (CompMin > Tmin) {
-                                    Tmin = CompMin;
-                                } else {
-                                }
-                            }
-
-                        }
-                        Interp(ArrTsVel,ArrVel,ArrTsRPM,ArrRPM,Tmax,Tmin);
-                        CountReps=0;
-                    }
-                    CountReps++;
-                       */
-
 
 
                     //Send to tue UI activity through Observer
@@ -263,40 +203,6 @@ public class CowService extends Service{
         };
     }
 
-    private void Interp() {
-        //private double[]
-        //double[] arrTsVel, double[] arrVel, double[] arrTsRPM, double[] arrRPM, double tmax, double tmin
-
-        /*double Tlaps=tmax-tmin;
-        int numCas= (int) (Tlaps/100);
-        double[] TimeV= new double[numCas];
-        for (int cv=0;cv<numCas;cv++) {
-            TimeV[cv]=tmin+100;
-        }
-        VelInterp=Util.interpLinear(arrTsVel,arrVel,TimeV);
-        IncInterp=Util.interpLinear(arrTsRPM,arrRPM,TimeV);*/
-        double[] arrVel = {0,0,0,11,11,12,11,17,24,39,39,40,41,41,41,38,9,33,34,43,45,48,48,46,45,39,39,14,9,11,19,21,38,39,39,42,44,44,45,46,45,45,42,38,35,31,6,21,31,39,40,43,42,28,7,12,15,16,14,11,3};
-        double[] arrRPM = {645,790,1525.5,1781.5,1267.25,1232.25,995.75,907.25,800.25,744.5,1688,1910.25,1914.5,1951.75,2100.25,1777.25,1718,1105,1040.25,1003.75,929,912.75,806.25,773.75,1455.75,1950.75,2061.75,1951.25,1879.5,2020.75,2274,2257.25,2330.25,2366.75,2380.25,2394.5,2433.25,2507.25,2508,2458.5,2338.75,2360,1961.25,1936.5,1728.25,1558.5,1344,2039.75,2032.25,2054.25,2097.5,2199,2379.5,2485,2564.5,2496,2441.25,1474.75,998.5,955.5,1476.75,1491.25,1106,1205.5,635.75,932.5,932,810.75,781.5,782,693};
-        double[] arrTsVel = {3010956,3013023,3014210,3018012,3018425,3018838,3019322,3022696,3024089,3029773,3030173,3032026,3032598,3032918,3034029,3036538,3042324,3048734,3049136,3053224,3055332,3055986,3058435,3060531,3061673,3065100,3065418,3071064,3074557,3076665,3079171,3080051,3090543,3091255,3091662,3094102,3094896,3097757,3100247,3102400,3102700,3103570,3105769,3106657,3107143,3107628,3110809,3115272,3119063,3123460,3124252,3133275,3135385,3148708,3156154,3158326,3159221,3162106,3164397,3167321,3170301};
-        double[] arrTsRPM = {3015000,3015783,3023118,3025904,3030973,3032358,3038395,3039270,3040090,3041369,3045505,3047270,3047754,3048256,3049544,3050444,3053882,3056856,3059638,3061265,3063680,3064622,3070575,3072698,3076265,3078027,3078198,3081225,3081924,3082319,3084156,3085067,3086713,3088316,3089025,3089984,3090779,3092884,3093371,3095216,3095605,3096005,3096883,3098471,3102242,3104877,3106174,3113889,3116982,3117473,3117874,3119392,3122970,3125401,3130183,3134472,3134972,3136691,3138946,3139346,3147238,3147736,3150744,3152280,3154306,3156958,3157452,3165404,3167710,3168967,3171587};
-
-
-        VelInterp=Util.interpLinear(arrTsVel,arrVel,arrTsRPM);
-        RPMInterp=Util.interpLinear(arrTsRPM,arrRPM,arrTsVel);
-
-        Double FuleAcum=0.0;
-
-        for(int c=0;c >= VelInterp.length;c++){
-            //Inc Inicial
-            int IncI=5;
-            Double Acel=0.5;
-            FuleC=10.12+1.098*IncI+5.901*Acel-0.844*VelInterp[c]+0.0354*(VelInterp[c]*VelInterp[c])
-                    -0.0003*(VelInterp[c]*VelInterp[c]*VelInterp[c]);
-            FuleAcum=FuleAcum+FuleC;
-        }
-        Fuleprom=FuleAcum/(VelInterp.length);
-    }
-
     //RxJava Observable
     public Observable<String[]> observeString(){
         if(stringObservable== null) {
@@ -312,6 +218,7 @@ public class CowService extends Service{
         new_intent.setAction(ACTION_STRING_ACTIVITY);
         sendBroadcast(new_intent);
     }
+
     public void initBtMessageFiles(){
         //Initilizing CSV File with stored preferences
         String extStore = System.getenv("EXTERNAL_STORAGE");
@@ -536,8 +443,6 @@ public class CowService extends Service{
 
         }
 
-
-
     }
 
 
@@ -572,12 +477,4 @@ public class CowService extends Service{
         return cBinder;
     }
 
-    public double[] getVelInterp() {
-        return VelInterp;
-    }
-
-
-    public double getFuleprom() {
-        return Fuleprom;
-    }
 }

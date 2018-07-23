@@ -104,7 +104,7 @@ public class SensorsService extends Service implements SensorEventListener{
                     mags = event.values.clone();
                     break;
             }
-            Long tsLong = System.currentTimeMillis()/1000;
+            Long tsLong = System.currentTimeMillis();
             ts = tsLong.toString();
         }
         if (mags != null && accels != null) {
